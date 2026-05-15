@@ -398,6 +398,14 @@
   /* Split char for hero */
   .chr{display:inline-block; transform:translateY(110%); transition:transform 1s var(--ease-exp);}
   .ready .chr{transform:translateY(0);}
+  .lang-char{
+    display:inline-block;
+    white-space:pre;
+    transform-origin:50% 70%;
+    will-change:transform, opacity, filter;
+  }
+  .lang-switching{overflow:visible;}
+  .lang button[aria-pressed="true"]{opacity:1;}
 
   @media (max-width:900px){
     :root{--pad:20px;}
@@ -1287,19 +1295,136 @@ function detectLang(){
   const browserLangs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language];
   return browserLangs.map(normalizeLang).find(Boolean) || 'en';
 }
-function applyLang(lang, persist = true){
-  const selectedLang = normalizeLang(lang) || 'en';
-  const d = DICT[selectedLang];
+const LANG_SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZАБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩ0123456789';
+let langSwitchToken = 0;
+function setLangContent(d){
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const v = d[el.dataset.i18n];
     if (v) el.innerHTML = v;
   });
-  document.querySelectorAll('.lang button').forEach(b => b.classList.toggle('on', b.dataset.lang === selectedLang));
+}
+function splitLangChars(el){
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
+    acceptNode(node){
+      return node.nodeValue ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+    }
+  });
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  const spans = [];
+  nodes.forEach(node => {
+    const frag = document.createDocumentFragment();
+    Array.from(node.nodeValue).forEach(char => {
+      const span = document.createElement('span');
+      span.className = 'lang-char';
+      span.textContent = char === ' ' ? '\u00A0' : char;
+      span.dataset.finalChar = span.textContent;
+      frag.appendChild(span);
+      spans.push(span);
+    });
+    node.parentNode.replaceChild(frag, node);
+  });
+  return spans;
+}
+function runCharScramble(spans, token){
+  spans.forEach((span, index) => {
+    const finalChar = span.dataset.finalChar;
+    if (!finalChar || !finalChar.trim()) return;
+    let ticks = 0;
+    const maxTicks = 3 + Math.floor(Math.random() * 5);
+    const delay = Math.min(index * 9, 180);
+    setTimeout(() => {
+      const tick = setInterval(() => {
+        if (token !== langSwitchToken) {
+          clearInterval(tick);
+          return;
+        }
+        ticks += 1;
+        span.textContent = ticks >= maxTicks ? finalChar : LANG_SCRAMBLE_CHARS[Math.floor(Math.random() * LANG_SCRAMBLE_CHARS.length)];
+        if (ticks >= maxTicks) clearInterval(tick);
+      }, 34);
+    }, delay);
+  });
+}
+function animateLangElement(el, html, token){
+  return new Promise(resolve => {
+    const originalHeight = el.offsetHeight;
+    el.style.minHeight = originalHeight ? `${originalHeight}px` : '';
+    el.classList.add('lang-switching');
+    const oldSpans = splitLangChars(el);
+    const outAnimations = oldSpans.map((span, index) => span.animate([
+      {opacity:1, transform:'translateY(0) scale(1)', filter:'blur(0)'},
+      {opacity:0, transform:`translateY(${index % 2 ? '-' : ''}.45em) scale(.96)`, filter:'blur(5px)'}
+    ], {
+      duration:220,
+      delay:Math.min(index * 6, 110),
+      easing:'cubic-bezier(.86,0,.07,1)',
+      fill:'forwards'
+    }).finished.catch(() => {}));
+    Promise.all(outAnimations).then(() => {
+      if (token !== langSwitchToken) {
+        resolve();
+        return;
+      }
+      el.innerHTML = html;
+      const newSpans = splitLangChars(el);
+      runCharScramble(newSpans, token);
+      const inAnimations = newSpans.map((span, index) => span.animate([
+        {opacity:0, transform:`translateY(${index % 2 ? '' : '-'}0.55em) rotate(${index % 2 ? 3 : -3}deg)`, filter:'blur(7px)'},
+        {opacity:1, transform:'translateY(0) rotate(0)', filter:'blur(0)'}
+      ], {
+        duration:520,
+        delay:Math.min(index * 8, 170),
+        easing:'cubic-bezier(.2,.8,.2,1)',
+        fill:'forwards'
+      }).finished.catch(() => {}));
+      Promise.all(inAnimations).then(() => {
+        if (token === langSwitchToken) el.innerHTML = html;
+        el.style.minHeight = '';
+        el.classList.remove('lang-switching');
+        resolve();
+      });
+    });
+  });
+}
+function animateLangContent(d){
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches || !Element.prototype.animate) {
+    setLangContent(d);
+    return;
+  }
+  const token = ++langSwitchToken;
+  const tasks = [];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const v = d[el.dataset.i18n];
+    if (!v || el.innerHTML === v) return;
+    const rect = el.getBoundingClientRect();
+    const isVisible = rect.bottom > -80 && rect.top < innerHeight + 80 && rect.width > 0 && rect.height > 0;
+    if (!isVisible) {
+      el.innerHTML = v;
+      return;
+    }
+    tasks.push(animateLangElement(el, v, token));
+  });
+  Promise.all(tasks).catch(() => setLangContent(d));
+}
+function applyLang(lang, persist = true, animate = false){
+  const selectedLang = normalizeLang(lang) || 'en';
+  const d = DICT[selectedLang];
+  if (animate) animateLangContent(d);
+  else {
+    langSwitchToken += 1;
+    setLangContent(d);
+  }
+  document.querySelectorAll('.lang button').forEach(b => {
+    const isActive = b.dataset.lang === selectedLang;
+    b.classList.toggle('on', isActive);
+    b.setAttribute('aria-pressed', String(isActive));
+  });
   document.documentElement.lang = selectedLang;
   document.title = d['meta.title'];
   if (persist) storeLang(selectedLang);
 }
-document.querySelectorAll('.lang button').forEach(b => b.addEventListener('click', () => applyLang(b.dataset.lang, true)));
+document.querySelectorAll('.lang button').forEach(b => b.addEventListener('click', () => applyLang(b.dataset.lang, true, true)));
 applyLang(detectLang(), false);
 
 /* ---------- Service bg swap ---------- */
