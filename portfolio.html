@@ -123,7 +123,7 @@
     font-size:clamp(48px, 11.2vw, 172px);
     margin-top:20px;
   }
-  .hero-title .row{display:block; position:relative; overflow:hidden; padding-bottom:.16em; margin-bottom:-.12em;}
+  .hero-title .row{display:block; position:relative; overflow:hidden; padding-top:.14em; padding-bottom:.18em; margin-top:-.14em; margin-bottom:-.14em;}
   .hero-title .row .inner{display:inline-block; transform:translateY(110%); transition:transform 1.2s var(--ease-exp);}
   .hero-title .row.ready .inner{transform:translateY(0);}
   .hero-title .row.indent{padding-left:clamp(32px, 9vw, 160px);}
@@ -144,12 +144,12 @@
   .hero-footer.ready > *:nth-child(3){transition-delay:1.7s;}
 
   .hero-scroll{
-    position:absolute; bottom:30px; left:50%; transform:translateX(-50%);
+    position:absolute; bottom:clamp(92px, 8vw, 160px); right:var(--pad);
     font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase;
     display:flex; flex-direction:column; align-items:center; gap:10px; opacity:0; transition:opacity 1s var(--ease) 2s;
   }
   .hero-scroll.ready{opacity:.7;}
-  .hero-scroll .line{width:1px; height:40px; background:var(--ink); overflow:hidden; position:relative;}
+  .hero-scroll .line{width:1px; height:28px; background:var(--ink); overflow:hidden; position:relative;}
   .hero-scroll .line::after{content:""; position:absolute; inset:0; background:var(--bg); animation:drop 2s var(--ease-exp) infinite;}
   @keyframes drop{0%{transform:translateY(-100%)} 60%{transform:translateY(100%)} 100%{transform:translateY(100%)}}
 
@@ -324,15 +324,27 @@
     cursor:none; position:relative; overflow:hidden; color:rgba(244,244,242,.45);
   }
   .service.active{color:var(--bg); background:rgba(11,11,11,.1); border-color:rgba(244,244,242,.5); transform:translateY(-6px);}
+  .service:focus-visible{outline:1px solid rgba(244,244,242,.85); outline-offset:4px;}
   .service .head{display:flex; justify-content:space-between; align-items:flex-start;}
   .service h3{font-family:'Unbounded'; font-size:clamp(18px,1.7vw,26px); letter-spacing:-.015em; line-height:1; max-width:10ch;}
   .service .n{font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:.12em; opacity:.55;}
   .service ul{display:flex; flex-direction:column; gap:4px; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:.02em; text-transform:none; opacity:0; transform:translateY(12px); transition:all .6s var(--ease-exp);}
   .service.active ul{opacity:.9; transform:none;}
   .service ul li{list-style:none;}
-  .svc-top{position:relative; z-index:2; display:grid; grid-template-columns:1.3fr 1fr; gap:clamp(40px,6vw,100px); align-items:end; margin-bottom:clamp(60px,8vw,120px);}
-  .svc-right{max-width:38ch; font-family:'Inter Tight'; font-size:14px; line-height:1.55; opacity:.75; display:flex; flex-direction:column; gap:16px;}
+  @media (min-width:901px){
+    .service{min-height:270px;}
+    .service ul{display:none;}
+  }
+  .svc-top{position:relative; z-index:2; display:grid; grid-template-columns:minmax(0,1.05fr) minmax(360px,.95fr); gap:clamp(40px,6vw,100px); align-items:start; margin-bottom:clamp(56px,7vw,104px);}
+  .svc-right{max-width:none; font-family:'Inter Tight'; font-size:14px; line-height:1.55; opacity:1; display:flex; flex-direction:column; gap:16px;}
   .svc-right .k{font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; opacity:.55; display:block; margin-bottom:6px;}
+  .svc-right > p{max-width:38ch; opacity:.72;}
+  .svc-feature{margin-top:8px; border-top:1px solid rgba(244,244,242,.24); padding-top:22px; transition:opacity .24s var(--ease), transform .24s var(--ease);}
+  .svc-feature.is-switching{opacity:.28; transform:translateY(8px);}
+  .svc-feature .feature-label{font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:rgba(244,244,242,.58); display:block; margin-bottom:14px;}
+  .svc-feature h3{font-family:'Unbounded'; font-size:clamp(24px,2.8vw,47px); line-height:1.02; letter-spacing:-.025em; max-width:12ch; margin-bottom:18px;}
+  .svc-feature ul{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px 20px; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:.03em; color:rgba(244,244,242,.72);}
+  .svc-feature li{list-style:none; border-top:1px solid rgba(244,244,242,.15); padding-top:8px;}
   @media (max-width:900px){ .svc-top{grid-template-columns:1fr; gap:40px;} }
 
   /* About */
@@ -351,6 +363,9 @@
   .about p{font-size:clamp(16px, 1.15vw, 19px); line-height:1.5; margin-bottom:18px; max-width:52ch;}
   .about p b{font-family:'Space Grotesk'; font-weight:700;}
   .about-stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; margin-top:40px; border-top:1px solid var(--rule); padding-top:24px;}
+  .about-stats .s{position:relative; min-height:74px; padding-left:18px;}
+  .about-stats .s::before{content:""; position:absolute; left:0; top:2px; width:1px; height:100%; background:var(--rule);}
+  .about-stats .s::after{content:""; position:absolute; left:-3px; top:0; width:7px; height:7px; border-radius:50%; background:var(--ink);}
   .about-stats .s .k{font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:.14em; color:var(--mute); text-transform:uppercase; display:block; margin-bottom:8px;}
   .about-stats .s .v{font-family:'Unbounded'; font-size:clamp(28px, 2.8vw, 40px); letter-spacing:-.02em; line-height:1;}
 
@@ -428,14 +443,15 @@
     .hero-meta{display:grid; grid-template-columns:1fr; gap:8px; max-width:28ch; font-size:10px; line-height:1.35;}
     .hero-meta span:nth-child(2), .hero-meta span:nth-child(3){display:none;}
     .hero-title{font-size:58px; line-height:.91; letter-spacing:-.04em; margin-top:26px;}
-    .hero-title .row{padding-bottom:.18em; margin-bottom:-.11em;}
+    .hero-title .row{padding-top:.16em; padding-bottom:.2em; margin-top:-.16em; margin-bottom:-.14em;}
     .hero-title .row.indent{padding-left:28px;}
     .hero-title .row em{-webkit-text-stroke:1.3px var(--ink);}
     .hero-title .row .dot{width:.68em; height:.68em; margin-right:.1em;}
     .hero-footer{grid-template-columns:1fr; gap:16px; margin-top:28px; max-width:36ch;}
     .hero-footer p{font-size:16px; line-height:1.42;}
     .hero-footer .v{font-size:15px;}
-    .hero-scroll{bottom:24px; font-size:9px; letter-spacing:.18em;}
+    .hero-scroll{bottom:22px; right:var(--pad); font-size:9px; letter-spacing:.18em;}
+    .hero-scroll .line{height:22px;}
 
     section{padding:72px var(--pad);}
     .sec-head{grid-template-columns:1fr; gap:8px; margin-bottom:36px; padding-top:18px;}
@@ -479,7 +495,9 @@
     .svc-top{grid-template-columns:1fr; gap:28px; margin-bottom:42px;}
     .svc-lead{font-size:32px; line-height:1.08; max-width:14ch;}
     .svc-lead em{-webkit-text-stroke:1.1px var(--bg);}
-    .svc-right{font-size:15px; max-width:34ch;}
+    .svc-right{font-size:15px; max-width:none;}
+    .svc-feature h3{font-size:28px; max-width:13ch;}
+    .svc-feature ul{grid-template-columns:1fr; gap:7px; font-size:11px;}
     .services{grid-template-columns:1fr; gap:14px; padding-top:20px;}
     .service{grid-column:span 1; min-height:0; padding:20px; gap:42px; color:var(--bg); border:1px solid rgba(244,244,242,.16); background:rgba(11,11,11,.28);}
     .service.active{transform:none; background:rgba(11,11,11,.18);}
@@ -776,11 +794,23 @@
       <span class="k">Est. 2019®</span>
       <p data-i18n="svc.right1">Каждый сайт уже в движении — люди, цифры, решения. Моя задача — не сидеть сверху, а войти внутрь и помочь выстроить систему.</p>
       <p data-i18n="svc.right2">Работаю с командами и напрямую: проектирование, код, анимации и интеграции — как один связанный процесс.</p>
+      <div class="svc-feature" id="svcFeature" aria-live="polite">
+        <span class="feature-label" id="svcFeatureLabel">[ 01 ] / Focus</span>
+        <h3 id="svcFeatureTitle">Сайты под ключ</h3>
+        <ul id="svcFeatureList">
+          <li>Лендинги и промо</li>
+          <li>Многостраничники</li>
+          <li>Проектирование UX</li>
+          <li>Копирайт и структура</li>
+          <li>SEO-база</li>
+          <li>Запуск на хостинге</li>
+        </ul>
+      </div>
     </aside>
   </div>
 
   <div class="services" id="svcCards">
-    <div class="service active" data-layer="1">
+    <div class="service active" data-layer="1" tabindex="0">
       <div class="head"><h3 data-i18n="s1.t">Сайты под ключ</h3><span class="n">[ 01 ]</span></div>
       <ul>
         <li data-i18n="s1.i1">Лендинги и промо</li>
@@ -791,7 +821,7 @@
         <li data-i18n="s1.i6">Запуск на хостинге</li>
       </ul>
     </div>
-    <div class="service" data-layer="2">
+    <div class="service" data-layer="2" tabindex="0">
       <div class="head"><h3 data-i18n="s2.t">Разработка</h3><span class="n">[ 02 ]</span></div>
       <ul>
         <li data-i18n="s2.i1">Next.js / React</li>
@@ -802,7 +832,7 @@
         <li data-i18n="s2.i6">Аналитика</li>
       </ul>
     </div>
-    <div class="service" data-layer="3">
+    <div class="service" data-layer="3" tabindex="0">
       <div class="head"><h3 data-i18n="s3.t">E-commerce</h3><span class="n">[ 03 ]</span></div>
       <ul>
         <li data-i18n="s3.i1">Shopify Hydrogen</li>
@@ -813,7 +843,7 @@
         <li data-i18n="s3.i6">Performance</li>
       </ul>
     </div>
-    <div class="service" data-layer="4">
+    <div class="service" data-layer="4" tabindex="0">
       <div class="head"><h3 data-i18n="s4.t">Motion &amp; UI</h3><span class="n">[ 04 ]</span></div>
       <ul>
         <li data-i18n="s4.i1">GSAP / Lenis</li>
@@ -856,9 +886,9 @@
       <p data-i18n="about.p2"><b>Стек:</b> TypeScript, React, Next.js, Node, PostgreSQL. Пишу аккуратно, документирую, люблю, когда код легко читать через год.</p>
       <p data-i18n="about.p3"><b>Подход:</b> сначала смысл и структура, потом форма. Сильная типографика и скорость — это тоже дизайн.</p>
       <div class="about-stats">
-        <div class="s"><span class="k">Years</span><span class="v" data-counter="6" data-suffix="+">6+</span></div>
-        <div class="s"><span class="k">Projects</span><span class="v" data-counter="40" data-suffix="+">40+</span></div>
-        <div class="s"><span class="k">Awards</span><span class="v" data-counter="4">4</span></div>
+        <div class="s"><span class="k" data-i18n="stats.years.k">Prod years</span><span class="v" data-counter="6" data-suffix="+">6+</span></div>
+        <div class="s"><span class="k" data-i18n="stats.sites.k">Shipped sites</span><span class="v" data-counter="40" data-suffix="+">40+</span></div>
+        <div class="s"><span class="k" data-i18n="stats.load.k">Load target</span><span class="v" data-i18n="stats.load.v">&lt;1s</span></div>
       </div>
     </div>
   </div>
@@ -1236,6 +1266,7 @@ const DICT = {
     "about.p1":"Занимаюсь вебом с 2019 года. Начинал как верстальщик, сейчас веду проекты целиком — от идеи и архитектуры до продакшна и поддержки.",
     "about.p2":"<b>Стек:</b> TypeScript, React, Next.js, Node, PostgreSQL. Пишу аккуратно, документирую, люблю, когда код легко читать через год.",
     "about.p3":"<b>Подход:</b> сначала смысл и структура, потом форма. Сильная типографика и скорость — это тоже дизайн.",
+    "stats.years.k":"Prod years","stats.sites.k":"Shipped sites","stats.load.k":"Load target","stats.load.v":"&lt;1s",
     "contact.title":"Связаться","contact.kicker":"Пишите — отвечу в течение дня",
     "contact.mailTop":"@marnitic","contact.mailBot":"— давайте поговорим",
     "footer.made":"Собрано вручную. Москва → Мир.","footer.status":"Доступен для заказов"
@@ -1270,6 +1301,7 @@ const DICT = {
     "about.p1":"Been in the web since 2019. Started as a front-end dev, now I lead projects end-to-end.",
     "about.p2":"<b>Stack:</b> TypeScript, React, Next.js, Node, PostgreSQL. I write carefully and document everything.",
     "about.p3":"<b>Approach:</b> meaning and structure first, then form. Typography and speed are design too.",
+    "stats.years.k":"Prod years","stats.sites.k":"Shipped sites","stats.load.k":"Load target","stats.load.v":"&lt;1s",
     "contact.title":"Get in touch","contact.kicker":"Drop a line — same-day reply",
     "contact.mailTop":"@marnitic","contact.mailBot":"— let's talk",
     "footer.made":"Handcrafted. Moscow → World.","footer.status":"Available for work"
@@ -1300,11 +1332,13 @@ function detectLang(){
 }
 const LANG_SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZАБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩ0123456789';
 let langSwitchToken = 0;
+let refreshServiceFeature = null;
 function setLangContent(d){
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const v = d[el.dataset.i18n];
     if (v) el.innerHTML = v;
   });
+  if (typeof refreshServiceFeature === 'function') refreshServiceFeature();
 }
 function splitLangChars(el){
   const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
@@ -1408,7 +1442,11 @@ function animateLangContent(d){
     }
     tasks.push(animateLangElement(el, v, token));
   });
-  Promise.all(tasks).catch(() => setLangContent(d));
+  Promise.all(tasks)
+    .then(() => {
+      if (typeof refreshServiceFeature === 'function') refreshServiceFeature();
+    })
+    .catch(() => setLangContent(d));
 }
 function applyLang(lang, persist = true, animate = false){
   const selectedLang = normalizeLang(lang) || 'en';
@@ -1433,13 +1471,49 @@ applyLang(detectLang(), false);
 /* ---------- Service bg swap ---------- */
 const svcCards = document.querySelectorAll('#svcCards .service');
 const svcLayers = document.querySelectorAll('#svcBg .layer');
+const svcFeature = document.getElementById('svcFeature');
+const svcFeatureLabel = document.getElementById('svcFeatureLabel');
+const svcFeatureTitle = document.getElementById('svcFeatureTitle');
+const svcFeatureList = document.getElementById('svcFeatureList');
+let svcFeatureTimer = null;
+function updateSvcFeature(card, animate = true){
+  if (!card || !svcFeature || !svcFeatureLabel || !svcFeatureTitle || !svcFeatureList) return;
+  const apply = () => {
+    const label = card.querySelector('.n')?.textContent?.trim() || '';
+    const title = card.querySelector('h3')?.textContent?.trim() || '';
+    const items = Array.from(card.querySelectorAll('li')).map(li => li.textContent.trim()).filter(Boolean);
+    svcFeatureLabel.textContent = label ? `${label} / Focus` : 'Focus';
+    svcFeatureTitle.textContent = title;
+    svcFeatureList.replaceChildren(...items.map(item => {
+      const li = document.createElement('li');
+      li.textContent = item;
+      return li;
+    }));
+  };
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  clearTimeout(svcFeatureTimer);
+  if (!animate || reduce) {
+    svcFeature.classList.remove('is-switching');
+    apply();
+    return;
+  }
+  svcFeature.classList.add('is-switching');
+  svcFeatureTimer = setTimeout(() => {
+    apply();
+    svcFeature.classList.remove('is-switching');
+  }, 140);
+}
 function setSvc(n){
   svcCards.forEach(c => c.classList.toggle('active', c.dataset.layer === String(n)));
   svcLayers.forEach(l => l.classList.toggle('on', l.dataset.layer === String(n)));
+  updateSvcFeature(Array.from(svcCards).find(c => c.dataset.layer === String(n)));
 }
 svcCards.forEach(card => {
   card.addEventListener('mouseenter', () => setSvc(card.dataset.layer));
+  card.addEventListener('focusin', () => setSvc(card.dataset.layer));
 });
+refreshServiceFeature = () => updateSvcFeature(document.querySelector('#svcCards .service.active') || svcCards[0], false);
+refreshServiceFeature();
 
 /* ---------- Pinned reel scroll ---------- */
 const reelPin = document.getElementById('reel').querySelector('.reel-pin');
